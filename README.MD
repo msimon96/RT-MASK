@@ -14,7 +14,7 @@ RT-MASK is a Python script that converts IPv4 addresses to IPv6 addresses for th
 
 #### Downloading the scripts
 
-    [![asciicast](https://asciinema.org/a/6wasqWBEOx6gzWKfkqYffC3lc.svg)](https://asciinema.org/a/6wasqWBEOx6gzWKfkqYffC3lc)
+[![asciicast](https://asciinema.org/a/6wasqWBEOx6gzWKfkqYffC3lc.svg)](https://asciinema.org/a/6wasqWBEOx6gzWKfkqYffC3lc)
     ```bash
     git clone https://github.com/msimon96/RT-MASK.git && cd RT-MASK
     ```
