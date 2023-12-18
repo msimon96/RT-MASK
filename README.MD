@@ -7,22 +7,24 @@ RT-MASK is a Python script that converts IPv4 addresses to IPv6 addresses for th
 ### Prerequisites
 
 - Python 3.x (Tested on Python 3.6 and above)
-- Bash (for Bash version)
+- Bash (Tested on version 5.2.15(1)-release (x86_64-pc-linux-gnu)
 - PowerShell (5.1+)
 
 ### Running the Script
 
-#### Python Version
+#### Downloading the scripts
 
-1. Clone the repository:
-
+    [![asciicast](https://asciinema.org/a/6wasqWBEOx6gzWKfkqYffC3lc.svg)](https://asciinema.org/a/6wasqWBEOx6gzWKfkqYffC3lc)
     ```bash
-    git clone https://github.com/your-username/RT-MASK.git
-    cd rt-mask
+    git clone https://github.com/msimon96/RT-MASK.git && cd RT-MASK
     ```
 
-2. Run the Python script:
+#### Python Version
 
+
+1. Run the Python script:
+    
+    
     ```bash
     python RT-MASK.py [IPv4_ADDRESS]
     ```
@@ -39,7 +41,7 @@ RT-MASK is a Python script that converts IPv4 addresses to IPv6 addresses for th
 
     To exit the script, type 'exit' when prompted.
 
-3. For help and usage information:
+2. For help and usage information:
 
     ```bash
     python RT-MASK.py -h
@@ -47,15 +49,11 @@ RT-MASK is a Python script that converts IPv4 addresses to IPv6 addresses for th
 
 #### Bash Version
 
-1. Clone the repository:
 
-    ```bash
-    git clone https://github.com/your-username/RT-MASK.git
-    cd rt-mask
-    ```
+1. Run the Bash script:
 
-2. Run the Bash script:
 
+    [![asciicast](https://asciinema.org/a/RUYQ94zTOg6fXSroPzphnWVfh.svg)](https://asciinema.org/a/RUYQ94zTOg6fXSroPzphnWVfh)
     ```bash
     bash RT-MASK.sh [IPv4_ADDRESS]
     ```
@@ -72,7 +70,7 @@ RT-MASK is a Python script that converts IPv4 addresses to IPv6 addresses for th
 
     To exit the script, type 'exit' when prompted.
 
-3. For help and usage information:
+2. For help and usage information:
 
     ```bash
     bash RT-MASK.sh -h
@@ -80,14 +78,8 @@ RT-MASK is a Python script that converts IPv4 addresses to IPv6 addresses for th
 
 #### PowerShell Version
 
-1. Clone the repository:
 
-    ```bash
-    git clone https://github.com/your-username/RT-MASK.git
-    cd RT-MASK
-    ```
-
-2. Run the PowerShell script:
+1. Run the PowerShell script:
 
     ```powershell
     .\RT-MASK.ps1 [IPv4_ADDRESS]
@@ -105,7 +97,7 @@ RT-MASK is a Python script that converts IPv4 addresses to IPv6 addresses for th
 
     To exit the script, type 'exit' when prompted.
 
-3. For help and usage information:
+2. For help and usage information:
 
     ```powershell
     .\RT-MASK.ps1 -h
