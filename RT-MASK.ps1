@@ -1,3 +1,13 @@
+$banner = @"
+######  #######       #     #    #     #####  #    # 
+#     #    #          ##   ##   # #   #     # #   #  
+#     #    #          # # # #  #   #  #       #  #   
+######     #    ##### #  #  # #     #  #####  ###    
+#   #      #          #     # #######       # #  #   
+#    #     #          #     # #     # #     # #   #  
+#     #    #          #     # #     #  #####  #    # 
+"@
+
 function ConvertTo-IPv6Mapped {
     param (
         [string]$ipv4_address
@@ -53,6 +63,7 @@ if ($args.Length -gt 0) {
     Process-IP $args[0]
 } else {
     # If no command-line argument, enter loop to get user input
+    Write-Host $banner # Comment out if you don't want the banner
     while ($true) {
         $ipv4_address = Read-Host "Enter an IPv4 address (or 'exit' to quit):"
         if ($ipv4_address -eq "exit") {

@@ -1,5 +1,15 @@
 #!/bin/bash
 
+banner="
+######  #######       #     #    #     #####  #    # 
+#     #    #          ##   ##   # #   #     # #   #  
+#     #    #          # # # #  #   #  #       #  #   
+######     #    ##### #  #  # #     #  #####  ###    
+#   #      #          #     # #######       # #  #   
+#    #     #          #     # #     # #     # #   #  
+#     #    #          #     # #     #  #####  #    # 
+"
+
 ipv4_to_ipv6_mapped() {
     local ipv4_address=$1
     IFS='.' read -r -a octets <<< "$ipv4_address"
@@ -59,6 +69,7 @@ if [ $# -gt 0 ]; then
     process_ip "$1"
 else
     # If no command-line argument, enter loop to get user input
+    echo "$banner" # Comment this line out if you don't want the banner
     while true; do
         read -r -p $'Enter an IPv4 address (or \'exit\' to quit): ' ipv4_address
         if [[ "$ipv4_address" == "exit" ]]; then

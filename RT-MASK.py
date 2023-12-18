@@ -2,6 +2,18 @@ import sys
 import socket
 import binascii
 
+def generate_banner():
+    banner = """
+    ######  #######       #     #    #     #####  #    # 
+    #     #    #          ##   ##   # #   #     # #   #  
+    #     #    #          # # # #  #   #  #       #  #   
+    ######     #    ##### #  #  # #     #  #####  ###    
+    #   #      #          #     # #######       # #  #   
+    #    #     #          #     # #     # #     # #   #  
+    #     #    #          #     # #     #  #####  #    # 
+    """
+    print(banner)
+
 def ipv4_to_ipv6_mapped(ipv4_address):
     ipv4_bytes = socket.inet_aton(ipv4_address)
     ipv6_hex = binascii.hexlify(ipv4_bytes).decode('utf-8')
@@ -45,6 +57,7 @@ def main():
         process_ip(sys.argv[1])
     else:
         # If no command-line argument, enter loop to get user input
+        generate_banner() # Comment this line out if you don't want the banner to display
         while True:
             ipv4_address = input("\033[93mEnter an IPv4 address (or 'exit' to quit):\033[0m ")
             if ipv4_address.lower() == 'exit':
