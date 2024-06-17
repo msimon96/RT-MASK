@@ -45,7 +45,7 @@ function Invoke-IPProcessing {
 
     # Format the output
     $ipv6_address_formatted = "$($ipv6_address.Substring(0, 11)):$($ipv6_address.Substring(11))"
-    $url_version_nossl = "https://[$ipv6_address_formatted]"
+    $url_version_nossl = "http://[$ipv6_address_formatted]"
     $url_version_ssl = "https://[$ipv6_address_formatted]"
 
     Write-Host "IPv4: $ipv4_address" -ForegroundColor Yellow
