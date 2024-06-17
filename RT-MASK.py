@@ -40,7 +40,7 @@ def process_ip(ipv4_address):
 
     # Format the output
     ipv6_address_formatted = ipv6_address[0:11] + ":" + ipv6_address[11:]
-    url_version_nossl = "\033[92m" + f"https://[{ipv6_address_formatted}]" + "\033[0m"
+    url_version_nossl = "\033[92m" + f"http://[{ipv6_address_formatted}]" + "\033[0m"
     url_version_ssl = "\033[92m" + f"https://[{ipv6_address_formatted}]" + "\033[0m"
 
     print(f"IPv4: \033[93m{ipv4_address}\033[0m")
