@@ -44,7 +44,7 @@ process_ip() {
 
     # Format the output
     ipv6_address_formatted="${ipv6_address:0:11}:${ipv6_address:11}"
-    url_version_nossl="https://[${ipv6_address_formatted}]"
+    url_version_nossl="http://[${ipv6_address_formatted}]"
     url_version_ssl="https://[${ipv6_address_formatted}]"
     
     # Add a new line
