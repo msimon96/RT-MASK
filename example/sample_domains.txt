@@ -1,0 +1,6 @@
+google.com
+github.com
+microsoft.com
+cloudflare.com
+amazon.com
+facebook.com

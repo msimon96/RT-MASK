@@ -1,9 +1,48 @@
-import sys
-import socket
-import binascii
+#!/usr/bin/env python3
 
-def generate_banner():
-    banner = """
+import argparse
+import sys
+from pathlib import Path
+from typing import List, Optional
+from rtmask.core.ip_converter import IPConverter, IPConversionResult
+from rtmask.utils.output_formatter import OutputFormatter
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description='RT-MASK: Red Team Mask for IPv4 to IPv6 Obfuscation',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog='''
+Examples:
+  %(prog)s -i 192.168.1.1
+  %(prog)s -d example.com
+  %(prog)s -c 192.168.1.0/24
+  %(prog)s -f input.txt
+  %(prog)s -i 192.168.1.1 --format json
+  %(prog)s -i 192.168.1.1 --qr
+  %(prog)s -i 192.168.1.1 --whois --geo
+        '''
+    )
+
+    input_group = parser.add_mutually_exclusive_group()
+    input_group.add_argument('-i', '--ip', help='Single IPv4 address to convert')
+    input_group.add_argument('-d', '--domain', help='Domain name to resolve and convert')
+    input_group.add_argument('-c', '--cidr', help='CIDR notation (e.g., 192.168.1.0/24)')
+    input_group.add_argument('-f', '--file', help='File containing IPv4 addresses or CIDR ranges')
+
+    parser.add_argument('-o', '--output', help='Output file (format determined by extension)')
+    parser.add_argument('--format', choices=['text', 'json', 'csv', 'html'], 
+                      default='text', help='Output format')
+    parser.add_argument('--output-dir', help='Directory for output files')
+    parser.add_argument('--qr', action='store_true', help='Generate QR codes for URLs')
+    parser.add_argument('--whois', action='store_true', help='Include WHOIS information')
+    parser.add_argument('--geo', action='store_true', help='Include geolocation information')
+    parser.add_argument('--network', action='store_true', help='Include network information')
+    parser.add_argument('--no-banner', action='store_true', help='Disable banner display')
+    
+    return parser.parse_args()
+
+def generate_banner() -> str:
+    return """
     ######  #######       #     #    #     #####  #    # 
     #     #    #          ##   ##   # #   #     # #   #  
     #     #    #          # # # #  #   #  #       #  #   
@@ -12,57 +51,106 @@ def generate_banner():
     #    #     #          #     # #     # #     # #   #  
     #     #    #          #     # #     #  #####  #    # 
     """
-    print(banner)
 
-def ipv4_to_ipv6_mapped(ipv4_address):
-    ipv4_bytes = socket.inet_aton(ipv4_address)
-    ipv6_hex = binascii.hexlify(ipv4_bytes).decode('utf-8')
-    ipv6_mapped = f"::ffff:{ipv6_hex}"
-    return ipv6_mapped
-
-def print_usage():
-    print("Usage: python script_name.py [IPv4_ADDRESS]")
-    print("Converts IPv4 addresses to IPv6 for obfuscation.")
-    print("\nOptions:")
-    print("  IPv4_ADDRESS   Specify the IPv4 address to convert.")
-    print("  -h, --help     Show this help message.")
-    sys.exit(0)
-
-def process_ip(ipv4_address):
-    try:
-        socket.inet_aton(ipv4_address)
-    except socket.error:
-        print("\033[93m" + f"Invalid IPv4 address: {ipv4_address}" + "\033[0m")
-        return
-
-    # Call the function to convert IPv4 to IPv6
-    ipv6_address = ipv4_to_ipv6_mapped(ipv4_address)
-
-    # Format the output
-    ipv6_address_formatted = ipv6_address[0:11] + ":" + ipv6_address[11:]
-    url_version_nossl = "\033[92m" + f"http://[{ipv6_address_formatted}]" + "\033[0m"
-    url_version_ssl = "\033[92m" + f"https://[{ipv6_address_formatted}]" + "\033[0m"
-
-    print(f"IPv4: \033[93m{ipv4_address}\033[0m")
-    print(f"IPv6: \033[93m{ipv6_address_formatted}\033[0m")
-    print(f"URL (no SSL): {url_version_nossl}")
-    print(f"URL (SSL): {url_version_ssl}")
+def process_input(converter: IPConverter, args: argparse.Namespace) -> List[IPConversionResult]:
+    results = []
+    
+    if args.ip:
+        result = converter.process_ip(args.ip, args.qr)
+        if result:
+            results.append(result)
+    
+    elif args.domain:
+        result = converter.process_ip(args.domain, args.qr)
+        if result:
+            results.append(result)
+    
+    elif args.cidr:
+        results.extend(converter.process_cidr(args.cidr, args.qr))
+    
+    elif args.file:
+        with open(args.file) as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith('#'):
+                    continue
+                    
+                if '/' in line:  # CIDR notation
+                    results.extend(converter.process_cidr(line, args.qr))
+                else:
+                    result = converter.process_ip(line, args.qr)
+                    if result:
+                        results.append(result)
+    
+    else:  # Interactive mode
+        while True:
+            try:
+                user_input = input("\033[93mEnter an IPv4 address, domain, or CIDR (or 'exit' to quit):\033[0m ")
+                if user_input.lower() == 'exit':
+                    break
+                    
+                if '/' in user_input:  # CIDR notation
+                    results.extend(converter.process_cidr(user_input, args.qr))
+                else:
+                    result = converter.process_ip(user_input, args.qr)
+                    if result:
+                        results.append(result)
+                        
+            except KeyboardInterrupt:
+                print("\nExiting...")
+                break
+                
+            except Exception as e:
+                print(f"\033[91mError: {str(e)}\033[0m")
+    
+    return results
 
 def main():
-    if "-h" in sys.argv or "--help" in sys.argv:
-        print_usage()
-
-    if len(sys.argv) > 1:
-        # If command-line argument is provided, process it
-        process_ip(sys.argv[1])
-    else:
-        # If no command-line argument, enter loop to get user input
-        generate_banner() # Comment this line out if you don't want the banner to display
-        while True:
-            ipv4_address = input("\033[93mEnter an IPv4 address (or 'exit' to quit):\033[0m ")
-            if ipv4_address.lower() == 'exit':
-                break
-            process_ip(ipv4_address)
+    args = parse_args()
+    
+    # Show banner unless disabled
+    if not args.no_banner:
+        print(generate_banner())
+    
+    # Initialize converter and formatter
+    output_dir = args.output_dir if args.output_dir else None
+    converter = IPConverter(output_dir)
+    formatter = OutputFormatter(output_dir)
+    
+    # Process input and get results
+    results = process_input(converter, args)
+    
+    if not results:
+        print("\033[91mNo valid results to display.\033[0m")
+        return
+    
+    # Handle output based on format
+    if args.format == 'text' and not args.output:
+        for result in results:
+            formatter.print_result(result)
+    
+    elif args.output or args.format != 'text':
+        output_file = args.output if args.output else f"rtmask_results.{args.format}"
+        
+        if args.format == 'json' or output_file.endswith('.json'):
+            formatter.save_json(results, output_file)
+        
+        elif args.format == 'html' or output_file.endswith('.html'):
+            formatter.save_html(results, output_file)
+        
+        elif args.format == 'csv' or output_file.endswith('.csv'):
+            formatter.save_csv(results, output_file)
+        
+        else:
+            print(f"\033[91mUnsupported output format: {args.format}\033[0m")
+            return
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nExiting...")
+        sys.exit(0)
+    except Exception as e:
+        print(f"\033[91mError: {str(e)}\033[0m")
+        sys.exit(1)
